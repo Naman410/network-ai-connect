@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Copy, MessageSquare } from "lucide-react";
+import { Copy, ChevronDown, ChevronUp } from "lucide-react";
 
 type Props = {
   name: string;
@@ -61,6 +61,7 @@ export default function MatchCard({
   interests,
   why,
 }: Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const handleCopyUsername = () => {
     const formattedUsername = formatDiscordUsername(discord);
     navigator.clipboard.writeText(formattedUsername);
@@ -146,25 +147,30 @@ export default function MatchCard({
           )}
         </div>
 
-        {/* Why matched with fixed height */}
-        <div className="h-[60px] italic text-slate-700 dark:text-slate-300 text-sm">
-          <p className="line-clamp-3" title={`Why you matched: ${why}`}>
-            🤝 <span className="font-medium">Why you matched:</span> {why}
-          </p>
+        {/* Why matched - expandable */}
+        <div className={`italic text-slate-700 dark:text-slate-300 text-sm ${!isExpanded ? 'h-[60px]' : ''}`}>
+          <div className="flex items-start">
+            <div className={isExpanded ? '' : 'line-clamp-2'}>
+              🤝 <span className="font-medium">Why you matched:</span> {why}
+            </div>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="ml-1 text-accent1 hover:text-accent2 transition-colors"
+              aria-label={isExpanded ? "Show less" : "Show more"}
+            >
+              {isExpanded ?
+                <ChevronUp size={16} className="inline-block" /> :
+                <ChevronDown size={16} className="inline-block" />
+              }
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Buttons with consistent layout */}
-      <div className="flex flex-col gap-2 mt-auto z-10">
+      {/* Button for copying Discord ID */}
+      <div className="flex mt-auto z-10">
         <button
           className="flex items-center justify-center gap-1 gradient-accent text-white px-3 py-2 rounded-lg font-semibold shadow hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-transform w-full"
-          onClick={handleFriendlyIntro}
-        >
-          <MessageSquare size={16} className="inline-block" />
-          Message on Discord
-        </button>
-        <button
-          className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg font-semibold border border-accent1 text-accent1 bg-transparent hover:bg-accent1/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition hover:scale-[1.02] w-full"
           onClick={handleCopyUsername}
         >
           <Copy size={16} className="inline-block" />

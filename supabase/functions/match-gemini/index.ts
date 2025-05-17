@@ -13,7 +13,13 @@ function generateSystemPrompt() {
   return `
 You are "SuperNetworkAI", an elite collaboration matchmaker for a global Discord tech community. Your job is to pick the 10 best matches for a given user based on their introduction, motivation, desired collaborators, interests, and tech stack. We want diverse, meaningful connections—look for people who inspire, share key passions, or creatively complement each other.
 
+The user has answered three questions:
+1. "What motivates you right now?" - This shows their current goals and interests
+2. "What skills do you love using?" - This shows their technical abilities and preferences
+3. "Who are you hoping to meet?" - This is the MOST IMPORTANT question that should heavily influence your matching
+
 Rules:
+- Give the HIGHEST priority to matching based on the third question ("Who are you hoping to meet?")
 - For each suggested match, return:
   1. their name
   2. their main role/title, location (if possible), interests
@@ -90,16 +96,31 @@ ${generateSystemPrompt()}
 // Fallback: simple keyword/interest match, pick top 10
 function fallbackMatch(answers: string[], profiles: any[]) {
   if (!answers || answers.length < 3) return profiles.slice(0, 10);
+
+  // q1 = "What motivates you right now?"
+  // q2 = "What skills do you love using?"
+  // q3 = "Who are you hoping to meet?" - This should have the highest weight
   const [q1, q2, q3] = answers.map((s: string) => s.toLowerCase());
+
   const scores = profiles.map((profile) => {
     let score = 0;
+
+    // Give highest weight to matching the "who you want to meet" question (q3)
     for (const interest of profile.interests || []) {
-      if (q1.includes(interest.toLowerCase())) score += 2;
-      if (q2.includes(interest.toLowerCase())) score += 2;
-      if (q3.includes(interest.toLowerCase())) score += 1;
+      const interestLower = interest.toLowerCase();
+      // "Who are you hoping to meet?" - highest weight
+      if (q3.includes(interestLower)) score += 4;
+      // "What motivates you right now?" - medium weight
+      if (q1.includes(interestLower)) score += 2;
+      // "What skills do you love using?" - medium weight
+      if (q2.includes(interestLower)) score += 2;
     }
+
+    // Additional matching on title and other fields
+    if ((profile.title || "").toLowerCase().includes(q3)) score += 3; // Higher weight for title matching q3
     if ((profile.title || "").toLowerCase().includes(q2)) score += 1;
     if ((profile.why || "").toLowerCase().includes(q1)) score += 1;
+
     return { ...profile, _score: score };
   });
   // Sort and pick best 10, fallback why

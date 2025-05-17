@@ -18,6 +18,11 @@ const chatBubbles = {
 
 // Helper function to generate a mock match reason based on user answers and profile
 function generateMockMatchReason(answers: string[], profile: any): string {
+  // q1 = "What motivates you right now?"
+  // q2 = "What skills do you love using?"
+  // q3 = "Who are you hoping to meet?" - This should have the highest weight
+  const [q1, q2, q3] = answers.map(a => a.toLowerCase());
+
   const reasons = [
     "You both share interests in technology and innovation.",
     "Your skills complement each other well for collaboration.",
@@ -26,16 +31,33 @@ function generateMockMatchReason(answers: string[], profile: any): string {
     "You both value similar approaches to problem-solving.",
   ];
 
-  // Try to make it more personalized if possible
+  // First priority: Check if any of their interests match who the user wants to meet (q3)
   if (profile.interests && profile.interests.length > 0) {
-    const interest = profile.interests[Math.floor(Math.random() * profile.interests.length)];
-    if (answers.some(answer => answer.toLowerCase().includes(interest.toLowerCase()))) {
-      return `You both mentioned an interest in ${interest}.`;
+    for (const interest of profile.interests) {
+      const interestLower = interest.toLowerCase();
+      // Check against "Who are you hoping to meet?" first (highest priority)
+      if (q3.includes(interestLower)) {
+        return `They match who you're looking to meet: someone with expertise in ${interest}.`;
+      }
     }
   }
 
-  if (profile.title && answers.some(answer => answer.toLowerCase().includes(profile.title.toLowerCase()))) {
-    return `Your interests align with their expertise as a ${profile.title}.`;
+  // Second priority: Check if their title matches who the user wants to meet
+  if (profile.title && q3.includes(profile.title.toLowerCase())) {
+    return `Their role as a ${profile.title} matches exactly who you're hoping to meet.`;
+  }
+
+  // Third priority: Check other interests against other questions
+  if (profile.interests && profile.interests.length > 0) {
+    const interest = profile.interests[Math.floor(Math.random() * profile.interests.length)];
+    // Check against skills (q2)
+    if (q2.includes(interest.toLowerCase())) {
+      return `You both share an interest in ${interest} as part of your skillset.`;
+    }
+    // Check against motivation (q1)
+    if (q1.includes(interest.toLowerCase())) {
+      return `Their expertise in ${interest} aligns with what motivates you.`;
+    }
   }
 
   // Default to random reason
