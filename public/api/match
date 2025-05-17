@@ -1,0 +1,28 @@
+{
+  "matches": [
+    {
+      "name": "Alex Chen",
+      "discord": "alexchen#1234",
+      "title": "Full-stack Developer & AI Enthusiast",
+      "location": "San Francisco, CA",
+      "interests": ["Machine Learning", "React", "Hiking"],
+      "why": "Both interested in AI and web development"
+    },
+    {
+      "name": "Jordan Taylor",
+      "discord": "jtaylor#5678",
+      "title": "UX Designer & Frontend Developer",
+      "location": "New York, NY",
+      "interests": ["UI/UX", "Design Systems", "Photography"],
+      "why": "Complementary skills in design and development"
+    },
+    {
+      "name": "Sam Rodriguez",
+      "discord": "samrod#9012",
+      "title": "Data Scientist & ML Engineer",
+      "location": "Austin, TX",
+      "interests": ["NLP", "Computer Vision", "Cycling"],
+      "why": "Shared interest in machine learning applications"
+    }
+  ]
+}

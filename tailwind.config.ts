@@ -27,6 +27,12 @@ export default {
         grayui: "#F1F5F9",
         border: "#E2E8F0",
       },
+      backgroundColor: {
+        background: "var(--background)",
+      },
+      textColor: {
+        foreground: "var(--foreground)",
+      },
       backgroundImage: {
         "accent-gradient": "linear-gradient(45deg,#7C3AED,#04B971)",
       },
