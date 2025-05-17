@@ -9,7 +9,85 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profile_experience_job_titles: {
+        Row: {
+          created_at: string | null
+          experience_job_title: string | null
+          id: number
+          profile_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          experience_job_title?: string | null
+          id?: number
+          profile_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          experience_job_title?: string | null
+          id?: number
+          profile_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_experience_job_titles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_interests: {
+        Row: {
+          created_at: string | null
+          id: number
+          interest: string | null
+          profile_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          interest?: string | null
+          profile_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          interest?: string | null
+          profile_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_interests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          actual_name: string | null
+          created_at: string | null
+          discord_username: string | null
+          id: number
+        }
+        Insert: {
+          actual_name?: string | null
+          created_at?: string | null
+          discord_username?: string | null
+          id?: number
+        }
+        Update: {
+          actual_name?: string | null
+          created_at?: string | null
+          discord_username?: string | null
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

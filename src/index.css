@@ -10,9 +10,8 @@
     --accent1: #7C3AED;
     --accent2: #04B971;
   }
-
   .dark {
-    --background: #0F172A;
+    --background: #181827;
     --foreground: #F8FAFC;
     --accent1: #7C3AED;
     --accent2: #04B971;
@@ -24,22 +23,26 @@
   body {
     @apply bg-background text-foreground transition-theme duration-300;
   }
+  .glass {
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-lg border border-gray-200 dark:border-slate-900 drop-shadow-lg;
+  }
+  .card-radius {
+    @apply rounded-xl;
+  }
 }
 
 @layer utilities {
   .gradient-accent {
-    background-image: linear-gradient(45deg,#7C3AED,#04B971);
+    background-image: linear-gradient(45deg, #7C3AED, #04B971);
   }
   .gradient-accent-text {
     @apply bg-gradient-to-r from-[var(--accent1)] to-[var(--accent2)] bg-clip-text text-transparent;
   }
   .glass {
-    @apply bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-border shadow-card;
-  }
-  .card-radius {
-    @apply rounded-xl;
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-lg border border-gray-200 dark:border-slate-900 !important;
   }
   .fade-slide {
-    animation: fade-slide 0.15s cubic-bezier(.47,1.64,.41,.8) forwards;
+    animation: fade-slide 0.18s cubic-bezier(.47,1.64,.41,.8) forwards;
   }
 }
+
