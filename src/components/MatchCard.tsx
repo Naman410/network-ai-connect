@@ -110,7 +110,7 @@ export default function MatchCard({
 
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[320px]' : 'h-[320px]'} justify-between p-4
+      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[340px]' : 'h-[340px]'} justify-between p-5
       after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 after:pointer-events-none`}>
       <div>
         {/* Name with fixed height */}
@@ -174,10 +174,10 @@ export default function MatchCard({
       {/* Button for copying Discord ID */}
       <div className="flex mt-auto z-10">
         <button
-          className="flex items-center justify-center gap-1 gradient-accent text-white px-3 py-2 rounded-lg font-semibold shadow hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-transform w-full"
+          className="flex items-center justify-center gap-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 rounded-lg font-semibold shadow border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all w-full"
           onClick={handleCopyUsername}
         >
-          <Copy size={16} className="inline-block" />
+          <Copy size={16} className="inline-block text-slate-600 dark:text-slate-300" />
           Copy Discord ID
         </button>
       </div>

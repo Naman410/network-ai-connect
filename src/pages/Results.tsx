@@ -49,10 +49,10 @@ const Results = () => {
       <InterestingBackground />
       <ThemeToggleButton />
       <ConfettiBurst run={showConfetti} />
-      <div className="flex justify-center mb-4">
+      <div className="absolute left-5 top-5 z-20">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent1 text-white hover:bg-accent2 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/80 dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition-colors shadow-md border border-slate-200 dark:border-slate-700"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -65,13 +65,13 @@ const Results = () => {
       <p className="text-lg text-gray-600 dark:text-gray-200 mb-7 text-center">Connect with standout collaborators on Discord!</p>
       {!matches && <ResultsSkeleton />}
       {matches && (
-        <div className="container mx-auto max-w-6xl">
-          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12 px-4 sm:px-6 fade-slide">
+        <div className="container mx-auto max-w-7xl">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 px-4 sm:px-6 fade-slide">
             {visibleMatches.map((m) => (
               <MatchCard key={m.discord} {...m} />
             ))}
             {Array.from({ length: skeletonFill }).map((_, idx) => (
-              <div key={`skeleton-${idx}`} className="h-[320px] glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-4">
+              <div key={`skeleton-${idx}`} className="h-[340px] glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-5">
                 <div className="h-6 w-1/2 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
                 <div className="h-4 w-2/3 mb-4 bg-slate-300 dark:bg-slate-800 rounded" />
                 <div className="h-4 w-1/3 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
