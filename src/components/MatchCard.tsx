@@ -62,8 +62,6 @@ export default function MatchCard({
   why,
 }: Props) {
   const [isTitleExpanded, setIsTitleExpanded] = useState(false);
-  const [isLocationExpanded, setIsLocationExpanded] = useState(false);
-  const [areInterestsExpanded, setAreInterestsExpanded] = useState(false);
   const handleCopyUsername = () => {
     const formattedUsername = formatDiscordUsername(discord);
     navigator.clipboard.writeText(formattedUsername);
@@ -112,7 +110,7 @@ export default function MatchCard({
 
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded || isLocationExpanded || areInterestsExpanded ? 'min-h-[320px]' : 'h-[320px]'} justify-between p-4
+      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[320px]' : 'h-[320px]'} justify-between p-4
       after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 after:pointer-events-none`}>
       <div>
         {/* Name with fixed height */}
@@ -124,7 +122,7 @@ export default function MatchCard({
         <div className={`mb-2 ${!isTitleExpanded ? 'h-[22px]' : ''}`}>
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-800 dark:text-gray-200 ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
+              <div className={`text-gray-900 dark:text-gray-100 ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
                 {title}
               </div>
               {title.length > 50 && (
@@ -143,58 +141,30 @@ export default function MatchCard({
           )}
         </div>
 
-        {/* Location - expandable */}
-        <div className={`mb-2 ${!isLocationExpanded ? 'h-[20px]' : ''}`}>
+        {/* Location with fixed height */}
+        <div className="h-[20px] mb-2">
           {location && (
-            <div className="flex items-start">
-              <div className={`text-sm text-slate-500 dark:text-slate-400 ${isLocationExpanded ? '' : 'line-clamp-1'}`}>
-                {location}
-              </div>
-              {location.length > 25 && (
-                <button
-                  onClick={() => setIsLocationExpanded(!isLocationExpanded)}
-                  className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0"
-                  aria-label={isLocationExpanded ? "Show less" : "Show more"}
-                >
-                  {isLocationExpanded ?
-                    <ChevronUp size={14} className="inline-block" /> :
-                    <ChevronDown size={14} className="inline-block" />
-                  }
-                </button>
+            <div className="text-sm text-slate-600 dark:text-slate-300 line-clamp-1" title={location}>
+              {location}
+            </div>
+          )}
+        </div>
+
+        {/* Interests - show all */}
+        <div className="mb-3 min-h-[32px]">
+          {interests && interests.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {interests.map((tag) =>
+                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 text-xs font-semibold px-2 py-1 rounded-full border border-accent1/20 text-accent1 dark:text-accent2 line-clamp-1">
+                  {truncate(tag, 15)}
+                </span>
               )}
             </div>
           )}
         </div>
 
-        {/* Interests - expandable */}
-        <div className={`mb-3 ${!areInterestsExpanded ? 'h-[32px]' : ''}`}>
-          {interests && interests.length > 0 && (
-            <div className="flex flex-col">
-              <div className="flex flex-wrap gap-1">
-                {(areInterestsExpanded ? interests : interests.slice(0, 2)).map((tag) =>
-                  <span key={tag} className="bg-gradient-to-r from-accent1/10 to-accent2/10 text-xs font-medium px-2 py-1 rounded-full border border-accent1/15 text-accent1 dark:text-accent2 line-clamp-1">
-                    {truncate(tag, 15)}
-                  </span>
-                )}
-                {interests.length > 2 && (
-                  <button
-                    onClick={() => setAreInterestsExpanded(!areInterestsExpanded)}
-                    className="text-accent1 hover:text-accent2 transition-colors flex-shrink-0 text-xs px-2 py-1"
-                    aria-label={areInterestsExpanded ? "Show less" : "Show more"}
-                  >
-                    {areInterestsExpanded ?
-                      <ChevronUp size={14} className="inline-block" /> :
-                      <ChevronDown size={14} className="inline-block" />
-                    }
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Why matched with fixed height */}
-        <div className="h-[60px] italic text-slate-700 dark:text-slate-300 text-sm">
+        <div className="h-[60px] italic text-slate-800 dark:text-slate-200 text-sm">
           <p className="line-clamp-3" title={`Why you matched: ${why}`}>
             🤝 <span className="font-medium">Why you matched:</span> {why}
           </p>

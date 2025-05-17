@@ -8,25 +8,24 @@ export default function ThemeToggleButton() {
   return (
     <button
       aria-label="Toggle theme"
-      className="group p-2 rounded-full transition-transform duration-200 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] absolute right-5 top-5 z-20 bg-grayui dark:bg-slate-800"
+      className="group p-2 rounded-full transition-transform duration-200 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] absolute right-5 top-5 z-20 bg-white/80 dark:bg-slate-800/90 shadow-md"
       onClick={toggleTheme}
       type="button"
       tabIndex={0}
     >
       <span className="sr-only">Toggle theme</span>
       <span
-        className={`block transition-transform duration-300 ${
-          theme === "dark" ? "rotate-180" : ""
+        className={`block transition-all duration-300 ${
+          theme === "dark" ? "rotate-0" : "rotate-0"
         }`}
       >
         {theme === "dark" ? (
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" className="w-6 h-6 text-yellow-300">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m8.66-8.66l-.7.7m-13.92 0-.7-.7m15.56 6.96-.7-.7M7.05 6.34l-.7-.7m6.36 12.42-.7.7m5.18-14.77l.7.7M3 12H2m20 0h-1" />
-            <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth={2}/>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-yellow-300">
+            <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
           </svg>
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" className="w-6 h-6 text-indigo-600">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 0111.21 3c0 .12 0 .24.01.36a9 9 0 009.78 9.43Z" />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-indigo-700">
+            <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd" />
           </svg>
         )}
       </span>

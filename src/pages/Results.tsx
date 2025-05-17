@@ -5,6 +5,7 @@ import MatchCard from "@/components/MatchCard";
 import ResultsSkeleton from "@/components/ResultsSkeleton";
 import ConfettiBurst from "@/components/ConfettiBurst";
 import PageWrapper from "@/components/PageWrapper";
+import ThemeToggleButton from "@/components/ThemeToggleButton";
 import { useNavigate } from "react-router-dom";
 
 const InterestingBackground = () => (
@@ -37,15 +38,29 @@ const Results = () => {
     }
   }, [matches, navigate]);
 
-  // Limit to 6 visible cards for better layout
-  const GRID_TOTAL = 6;
-  const visibleMatches = matches?.slice(0, GRID_TOTAL) || [];
-  const skeletonFill = Math.max(0, GRID_TOTAL - (visibleMatches?.length ?? 0));
+  // Show all matches
+  const visibleMatches = matches || [];
+  // Add skeleton placeholders if needed for a minimum of 6 cards
+  const MIN_CARDS = 6;
+  const skeletonFill = matches ? Math.max(0, MIN_CARDS - matches.length) : 0;
 
   return (
     <PageWrapper>
       <InterestingBackground />
+      <ThemeToggleButton />
       <ConfettiBurst run={showConfetti} />
+      <div className="flex justify-center mb-4">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent1 text-white hover:bg-accent2 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          Home
+        </button>
+      </div>
       <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-accent-text text-center drop-shadow-lg">Your Matches</h2>
       <p className="text-lg text-gray-600 dark:text-gray-200 mb-7 text-center">Connect with standout collaborators on Discord!</p>
       {!matches && <ResultsSkeleton />}
@@ -73,11 +88,8 @@ const Results = () => {
             ))}
           </div>
 
-          {matches.length > GRID_TOTAL && (
-            <div className="text-center mb-8">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                {matches.length - GRID_TOTAL} more matches available
-              </p>
+          {matches.length > 6 && (
+            <div className="text-center mb-8 mt-4">
               <button
                 className="px-4 py-2 text-sm font-medium text-accent1 border border-accent1 rounded-md hover:bg-accent1/10 transition-colors"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
