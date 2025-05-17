@@ -110,7 +110,7 @@ export default function MatchCard({
 
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[350px]' : 'h-[350px]'} justify-between p-6
+      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[380px]' : 'min-h-[380px]'} justify-between p-6
       min-w-[280px] w-full max-w-full transform hover:scale-[1.01] transition-transform duration-200 overflow-hidden
       after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 dark:after:to-[#7C3AED]/30 after:pointer-events-none`}>
       <div>
@@ -167,11 +167,11 @@ export default function MatchCard({
           )}
         </div>
 
-        {/* Why matched with fixed height */}
-        <div className="h-[60px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner overflow-hidden">
-          <p className="line-clamp-2" title={`Why you matched: ${why}`}>
-            <span className="font-semibold text-accent1 dark:text-accent2 inline-block mr-1">Why you matched:</span>
-            <span className="italic">{why}</span>
+        {/* Why matched - full display */}
+        <div className="min-h-[60px] max-h-[90px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner overflow-y-auto">
+          <p title={`Why you matched: ${why}`}>
+            <span className="font-semibold text-accent1 dark:text-accent2 block mb-1">Why you matched:</span>
+            <span className="italic block">{why}</span>
           </p>
         </div>
       </div>
