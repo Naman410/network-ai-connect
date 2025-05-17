@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Copy, MessageSquare } from "lucide-react";
+import { Copy, ChevronDown, ChevronUp } from "lucide-react";
 
 type Props = {
   name: string;
@@ -47,7 +48,7 @@ function formatDiscordUsername(username: string): string {
 
 // Prefilled friendly intro (for clipboard)
 const FRIENDLY_INTRO = (name: string) =>
-  `Hey, just matched on SuperNetwork AI! I'm ${name}. Would love to connect on Discord!`;
+  `Hey, ${name} here, just matched with you on SuperNetworkAI – let's connect!`;
 
 // Log Discord URL for debugging
 console.log('Discord URL function loaded');
@@ -62,50 +63,66 @@ export default function MatchCard({
 }: Props) {
   const [isTitleExpanded, setIsTitleExpanded] = useState(false);
   const handleCopyUsername = () => {
-    navigator.clipboard.writeText(discord);
+    const formattedUsername = formatDiscordUsername(discord);
+    navigator.clipboard.writeText(formattedUsername);
     toast({
       title: "Discord username copied",
-      description: discord
+      description: formattedUsername
     });
   };
 
   const handleFriendlyIntro = () => {
-    const formattedUsername = formatDiscordUsername(discord);
-    const intro = FRIENDLY_INTRO(name);
-    // Try: copy intro, open Discord @me, notify
-    navigator.clipboard.writeText(intro);
-    window.open(discordUrl(formattedUsername), "_blank", "noopener,noreferrer");
-    toast({
-      title: "Discord intro copied!",
-      description: "Friendly intro copied. Paste it in Discord to connect 🎉",
-      duration: 5000,
-    });
+    try {
+      // Copy the intro message to clipboard
+      navigator.clipboard.writeText(FRIENDLY_INTRO(name));
+
+      // Format the Discord username
+      const formattedUsername = formatDiscordUsername(discord);
+
+      // Log for debugging
+      console.log('Opening Discord URL for:', formattedUsername);
+      const url = discordUrl(formattedUsername);
+      console.log('Discord URL:', url);
+
+      // Open Discord in a new tab
+      window.open(url, "_blank", "noopener,noreferrer");
+
+      // Show toast with instructions
+      toast({
+        title: "Ready to connect!",
+        description: "Discord opened and intro message copied to clipboard. Just paste to send!",
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error('Error in handleFriendlyIntro:', error);
+
+      // Format the username for the fallback toast
+      const formattedUsername = formatDiscordUsername(discord);
+
+      // Fallback toast if there's an error
+      toast({
+        title: "Discord username copied",
+        description: `Add ${formattedUsername} on Discord to connect!`,
+        duration: 5000,
+      });
+    }
   };
 
   return (
-    <div
-      className={`glass card-radius shadow-card hover-scale group relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col min-w-[310px] max-w-[400px] w-full mx-auto justify-between p-6
-      after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f6f3ff]/0 after:to-[#7C3AED]/10 after:pointer-events-none
-      animate-fade-in`}
-      style={{ height: isTitleExpanded ? undefined : 370 }}
-    >
+    <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
+      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[340px]' : 'h-[340px]'} justify-between p-5
+      after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 after:pointer-events-none`}>
       <div>
-        <div className="mb-2 flex items-center gap-2">
-          <h3 className="font-black text-2xl text-accent1 dark:text-accent2 tracking-tight line-clamp-1" title={name}>
-            {name}
-          </h3>
-          {discord &&
-            <span className="inline-block px-2 py-0.5 rounded-full text-xs font-mono bg-accent2/10 text-accent2 ml-auto">
-              {discord}
-            </span>
-          }
+        {/* Name with fixed height */}
+        <div className="mb-2">
+          <h3 className="font-bold text-lg line-clamp-1" title={name}>{name}</h3>
         </div>
+
         {/* Title - expandable */}
-        <div className={`mb-2 ${!isTitleExpanded ? 'h-[26px]' : ''}`}>
+        <div className={`mb-2 ${!isTitleExpanded ? 'h-[22px]' : ''}`}>
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-900 dark:text-gray-100 text-base font-semibold ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
+              <div className={`text-gray-900 dark:text-gray-100 ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
                 {title}
               </div>
               {title.length > 50 && (
@@ -123,46 +140,45 @@ export default function MatchCard({
             </div>
           )}
         </div>
-        <div className="h-[22px] mb-2">
+
+        {/* Location with fixed height */}
+        <div className="h-[20px] mb-2">
           {location && (
             <div className="text-sm text-slate-600 dark:text-slate-300 line-clamp-1" title={location}>
               {location}
             </div>
           )}
         </div>
+
+        {/* Interests - show all */}
         <div className="mb-3 min-h-[32px]">
           {interests && interests.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {interests.map((tag) =>
-                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 text-xs font-bold px-2 py-1 rounded-full border border-accent1/20 text-accent1 dark:text-accent2 shadow-inner">
+                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 text-xs font-semibold px-2 py-1 rounded-full border border-accent1/20 text-accent1 dark:text-accent2 line-clamp-1">
                   {truncate(tag, 15)}
                 </span>
               )}
             </div>
           )}
         </div>
-        <div className="h-[60px] italic text-slate-800 dark:text-slate-200 text-base leading-relaxed">
+
+        {/* Why matched with fixed height */}
+        <div className="h-[60px] italic text-slate-800 dark:text-slate-200 text-sm">
           <p className="line-clamp-3" title={`Why you matched: ${why}`}>
-            <span className="mr-1">🤝</span>
-            <span className="font-bold">Why you matched:</span> {why}
+            🤝 <span className="font-medium">Why you matched:</span> {why}
           </p>
         </div>
       </div>
 
-      <div className="flex mt-auto gap-3 z-10">
+      {/* Button for copying Discord ID */}
+      <div className="flex mt-auto z-10">
         <button
-          className="flex-1 flex items-center justify-center gap-2 bg-accent1 text-white py-2 rounded-lg font-bold shadow hover:bg-accent2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all text-base"
+          className="flex items-center justify-center gap-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 rounded-lg font-semibold shadow border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all w-full"
           onClick={handleCopyUsername}
         >
-          <Copy size={18} className="inline-block" />
-          Copy Discord
-        </button>
-        <button
-          className="flex-1 flex items-center justify-center gap-2 bg-white border border-accent2 text-accent2 py-2 rounded-lg font-bold shadow hover:bg-accent2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#04B971] transition-all text-base"
-          onClick={handleFriendlyIntro}
-        >
-          <MessageSquare size={18} className="inline-block" />
-          Message on Discord
+          <Copy size={16} className="inline-block text-slate-600 dark:text-slate-300" />
+          Copy Discord ID
         </button>
       </div>
     </div>

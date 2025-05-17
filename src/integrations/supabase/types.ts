@@ -88,27 +88,6 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles_duplicate: {
-        Row: {
-          actual_name: string | null
-          created_at: string | null
-          discord_username: string | null
-          id: number
-        }
-        Insert: {
-          actual_name?: string | null
-          created_at?: string | null
-          discord_username?: string | null
-          id?: number
-        }
-        Update: {
-          actual_name?: string | null
-          created_at?: string | null
-          discord_username?: string | null
-          id?: number
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
