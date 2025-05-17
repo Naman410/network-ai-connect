@@ -1,7 +1,7 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "@/hooks/use-toast";
-import { Copy, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy } from "lucide-react";
 
 type Props = {
   name: string;
@@ -61,7 +61,6 @@ export default function MatchCard({
   interests,
   why,
 }: Props) {
-  const [isTitleExpanded, setIsTitleExpanded] = useState(false);
   const handleCopyUsername = () => {
     const formattedUsername = formatDiscordUsername(discord);
     navigator.clipboard.writeText(formattedUsername);
@@ -110,8 +109,8 @@ export default function MatchCard({
 
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[380px]' : 'min-h-[380px]'} justify-between p-6
-      min-w-[280px] w-full max-w-full transform hover:scale-[1.01] transition-transform duration-200 overflow-hidden
+      hover:border-accent1/90 hover:shadow-xl flex flex-col h-[350px] justify-between p-5
+      w-full transform hover:scale-[1.01] transition-all duration-200
       after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 dark:after:to-[#7C3AED]/30 after:pointer-events-none`}>
       <div>
         {/* Name with fixed height */}
@@ -119,25 +118,13 @@ export default function MatchCard({
           <h3 className="font-bold text-xl line-clamp-1 tracking-tight dark:text-white text-slate-900" title={name}>{name}</h3>
         </div>
 
-        {/* Title - expandable */}
-        <div className={`mb-3 ${!isTitleExpanded ? 'h-[24px]' : ''} overflow-hidden`}>
+        {/* Title - fixed height, no expansion */}
+        <div className="mb-3 h-[24px]">
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-800 dark:text-gray-50 font-medium pr-6 ${isTitleExpanded ? '' : 'line-clamp-1'}`} style={{ wordBreak: 'break-word' }}>
+              <div className="text-gray-800 dark:text-gray-50 font-medium line-clamp-1" style={{ wordBreak: 'break-word' }}>
                 {title}
               </div>
-              {title.length > 40 && (
-                <button
-                  onClick={() => setIsTitleExpanded(!isTitleExpanded)}
-                  className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0 absolute right-6"
-                  aria-label={isTitleExpanded ? "Show less" : "Show more"}
-                >
-                  {isTitleExpanded ?
-                    <ChevronUp size={14} className="inline-block" /> :
-                    <ChevronDown size={14} className="inline-block" />
-                  }
-                </button>
-              )}
             </div>
           )}
         </div>
@@ -154,35 +141,35 @@ export default function MatchCard({
           )}
         </div>
 
-        {/* Interests - show all */}
-        <div className="mb-3 min-h-[32px]">
+        {/* Interests - limited height */}
+        <div className="mb-3 h-[32px] overflow-hidden">
           {interests && interests.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {interests.map((tag) =>
-                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1.5 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 shadow-sm max-w-full overflow-hidden">
-                  <span className="block truncate" title={tag}>{truncate(tag, 12)}</span>
+              {interests.slice(0, 3).map((tag) =>
+                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 shadow-sm">
+                  <span className="block truncate" title={tag}>{truncate(tag, 10)}</span>
                 </span>
               )}
             </div>
           )}
         </div>
 
-        {/* Why matched - full display */}
-        <div className="min-h-[60px] max-h-[90px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner overflow-y-auto">
+        {/* Why matched - fixed height with strict line clamping */}
+        <div className="h-[80px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner overflow-hidden">
           <p title={`Why you matched: ${why}`}>
             <span className="font-semibold text-accent1 dark:text-accent2 block mb-1">Why you matched:</span>
-            <span className="italic block">{why}</span>
+            <span className="italic block line-clamp-2">{truncate(why, 120)}</span>
           </p>
         </div>
       </div>
 
       {/* Button for copying Discord ID */}
-      <div className="flex mt-4 z-10">
+      <div className="flex mt-3 z-10">
         <button
-          className="flex items-center justify-center gap-2 bg-white dark:bg-indigo-600 text-slate-800 dark:text-white px-4 py-3 rounded-lg font-semibold shadow-md border border-slate-200 dark:border-indigo-500 hover:bg-slate-50 dark:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all w-full transform hover:translate-y-[-2px]"
+          className="flex items-center justify-center gap-2 bg-white dark:bg-indigo-600 text-slate-800 dark:text-white px-4 py-2 rounded-lg font-semibold shadow-md border border-slate-200 dark:border-indigo-500 hover:bg-slate-50 dark:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all w-full transform hover:translate-y-[-2px]"
           onClick={handleCopyUsername}
         >
-          <Copy size={18} className="inline-block text-slate-600 dark:text-white" />
+          <Copy size={16} className="inline-block text-slate-600 dark:text-white" />
           Copy Discord ID
         </button>
       </div>

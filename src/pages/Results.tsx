@@ -65,24 +65,32 @@ const Results = () => {
       <p className="text-lg text-gray-600 dark:text-gray-200 mb-7 text-center">Connect with standout collaborators on Discord!</p>
       {!matches && <ResultsSkeleton />}
       {matches && (
-        <div className="container mx-auto max-w-[1600px]">
-          <div className="relative grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-10 mb-12 px-6 sm:px-8 fade-slide">
+        <div className="container mx-auto max-w-[900px]">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10 mb-12 px-4 sm:px-6 fade-slide">
             {visibleMatches.map((m) => (
-              <MatchCard key={m.discord} {...m} />
+              <div key={m.discord} className="flex justify-center mx-auto">
+                <div className="w-[350px]">
+                  <MatchCard {...m} />
+                </div>
+              </div>
             ))}
             {Array.from({ length: skeletonFill }).map((_, idx) => (
-              <div key={`skeleton-${idx}`} className="min-h-[380px] min-w-[280px] max-w-full glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-6 overflow-hidden">
-                <div className="h-6 w-1/2 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
-                <div className="h-4 w-2/3 mb-4 bg-slate-300 dark:bg-slate-800 rounded" />
-                <div className="h-4 w-1/3 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
-                <div className="flex gap-1 mb-4">
-                  <div className="h-6 w-20 bg-slate-200 dark:bg-slate-700 rounded-full" />
-                  <div className="h-6 w-20 bg-slate-300 dark:bg-slate-800 rounded-full" />
-                </div>
-                <div className="h-16 bg-slate-200 dark:bg-slate-700 rounded mb-auto" />
-                <div className="flex flex-col gap-2 mt-auto">
-                  <div className="h-10 bg-slate-300 dark:bg-slate-800 rounded" />
-                  <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded" />
+              <div key={`skeleton-${idx}`} className="flex justify-center mx-auto">
+                <div className="w-[350px]">
+                  <div className="h-[350px] glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-5">
+                    <div className="h-6 w-1/2 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
+                    <div className="h-4 w-2/3 mb-4 bg-slate-300 dark:bg-slate-800 rounded" />
+                    <div className="h-4 w-1/3 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
+                    <div className="flex gap-1 mb-4">
+                      <div className="h-6 w-20 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                      <div className="h-6 w-20 bg-slate-300 dark:bg-slate-800 rounded-full" />
+                    </div>
+                    <div className="h-16 bg-slate-200 dark:bg-slate-700 rounded mb-auto" />
+                    <div className="flex flex-col gap-2 mt-auto">
+                      <div className="h-10 bg-slate-300 dark:bg-slate-800 rounded" />
+                      <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded" />
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
