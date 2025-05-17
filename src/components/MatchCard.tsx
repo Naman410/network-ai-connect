@@ -20,15 +20,25 @@ function truncate(str: string, n: number) {
 // Discord deep link – direct message (note: Discord web can't prefill messages, but we guide the user)
 function discordUrl(user: string) {
   if (!user) return "#";
-  // If snowflake ID, use /users/ route, else normal username doesn't have direct deep link
-  return user.match(/^\d{15,}$/)
-    ? `https://discordapp.com/users/${user}`
-    : "https://discord.com/channels/@me";
+
+  // Clean up the username if it has a discriminator
+  const cleanUser = user.replace(/^@/, '');
+
+  // If snowflake ID, use /users/ route
+  if (cleanUser.match(/^\d{15,}$/)) {
+    return `https://discordapp.com/users/${cleanUser}`;
+  }
+
+  // For usernames, open Discord app to DMs
+  return "https://discord.com/channels/@me";
 }
 
 // Prefilled friendly intro (for clipboard)
 const FRIENDLY_INTRO = (name: string) =>
   `Hey, ${name} here, just matched with you on SuperNetworkAI – let's connect!`;
+
+// Log Discord URL for debugging
+console.log('Discord URL function loaded');
 
 export default function MatchCard({
   name,
@@ -44,18 +54,34 @@ export default function MatchCard({
   };
 
   const handleFriendlyIntro = () => {
-    // Copy the intro message to clipboard
-    navigator.clipboard.writeText(FRIENDLY_INTRO(name));
+    try {
+      // Copy the intro message to clipboard
+      navigator.clipboard.writeText(FRIENDLY_INTRO(name));
 
-    // Open Discord in a new tab
-    window.open(discordUrl(discord), "_blank", "noopener,noreferrer");
+      // Log for debugging
+      console.log('Opening Discord URL for:', discord);
+      const url = discordUrl(discord);
+      console.log('Discord URL:', url);
 
-    // Show toast with instructions
-    toast({
-      title: "Ready to connect!",
-      description: "Discord opened and intro message copied to clipboard. Just paste to send!",
-      duration: 5000,
-    });
+      // Open Discord in a new tab
+      window.open(url, "_blank", "noopener,noreferrer");
+
+      // Show toast with instructions
+      toast({
+        title: "Ready to connect!",
+        description: "Discord opened and intro message copied to clipboard. Just paste to send!",
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error('Error in handleFriendlyIntro:', error);
+
+      // Fallback toast if there's an error
+      toast({
+        title: "Discord username copied",
+        description: `Add ${discord} on Discord to connect!`,
+        duration: 5000,
+      });
+    }
   };
 
   return (

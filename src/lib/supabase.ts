@@ -1,12 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
 // These should be public anon keys, never use service keys in the browser
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Fallback to hardcoded values if environment variables are not available
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qxufzbrkouhznesqpawq.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4dWZ6YnJrb3Voem5lc3FwYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0NjM5ODYsImV4cCI6MjA2MzAzOTk4Nn0.Xqx__FOt9N1K1o7brTETWtHbQ0ljgOTSes7qrvLJkx8';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Missing Supabase credentials. Please check your environment variables.');
-}
+console.log('Using Supabase URL:', supabaseUrl);
+console.log('Environment mode:', import.meta.env.MODE);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

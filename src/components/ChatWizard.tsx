@@ -59,8 +59,33 @@ function getRandomLocation(): string {
   return locations[Math.floor(Math.random() * locations.length)];
 }
 
+// Check if we're in Lovable environment
+const isLovableEnvironment = () => {
+  return typeof window !== 'undefined' &&
+    (window.location.hostname.includes('lovable.dev') ||
+     document.referrer.includes('lovable.dev'));
+};
+
 async function fetchProfilesFromDB() {
   try {
+    // If we're in Lovable environment, use mock data from public folder
+    if (isLovableEnvironment()) {
+      console.log('Lovable environment detected, using mock data');
+      try {
+        // Try to fetch the mock data from the public folder
+        const response = await fetch('/api/match/index.json');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Mock data loaded from public folder:', data);
+          if (data.matches && Array.isArray(data.matches)) {
+            return data.matches;
+          }
+        }
+      } catch (mockError) {
+        console.error('Error loading mock data:', mockError);
+      }
+    }
+
     console.log('Fetching profiles from Supabase...');
 
     // Try to fetch from Supabase using the client
@@ -165,14 +190,42 @@ export default function ChatWizard() {
         // 1. Fetch all profiles (~120, public readable) for Gemini
         const allProfiles = await fetchProfilesFromDB();
 
+        // If we're in Lovable environment, try to use the mock data directly
+        if (isLovableEnvironment()) {
+          console.log('Lovable environment detected, using mock data for matches');
+          try {
+            // Try to fetch the mock data from the public folder
+            const response = await fetch('/api/match/index.json');
+            if (response.ok) {
+              const data = await response.json();
+              console.log('Mock matches loaded from public folder:', data);
+              if (data.matches && Array.isArray(data.matches) && data.matches.length > 0) {
+                setMatches(data.matches);
+                navigate("/results");
+                return;
+              }
+            }
+          } catch (mockError) {
+            console.error('Error loading mock matches:', mockError);
+          }
+        }
+
         try {
+          console.log("Attempting to call edge function with profiles:", allProfiles.length);
+
           // 2. Try to send to edge function for best matches using Supabase client
           const result = await callEdgeFunction('match-gemini', {
             answers,
             profiles: allProfiles
           });
 
-          if (!result || !result.matches) throw new Error("No matches found");
+          console.log("Edge function result:", result);
+
+          if (!result || !result.matches) {
+            console.warn("No matches found in result, using fallback");
+            throw new Error("No matches found");
+          }
+
           setMatches(result.matches);
 
           if (result.fallbackUsed) {
@@ -187,14 +240,21 @@ export default function ChatWizard() {
           console.log("Edge function error, using mock matches:", apiError);
 
           // Generate mock matches with "why" explanations based on user answers
-          const mockMatches = allProfiles.map(profile => ({
+          const mockMatches = allProfiles.slice(0, 10).map(profile => ({
             ...profile,
             why: generateMockMatchReason(answers, profile),
             location: getRandomLocation()
           }));
 
-          setMatches(mockMatches);
-          navigate("/results");
+          console.log("Generated mock matches:", mockMatches.length);
+
+          // Make sure we have valid matches before setting state
+          if (mockMatches.length > 0) {
+            setMatches(mockMatches);
+            navigate("/results");
+          } else {
+            throw new Error("Failed to generate matches");
+          }
 
           toast({
             title: "Using Demo Mode",

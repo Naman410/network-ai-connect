@@ -21,10 +21,20 @@ const Results = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (matches && matches.length) setShowConfetti(true);
+    // Show confetti only if we have matches
+    if (matches && matches.length) {
+      console.log("Showing confetti for matches:", matches.length);
+      setShowConfetti(true);
+    }
   }, [matches]);
+
   useEffect(() => {
-    if (matches === null) navigate("/");
+    // Redirect to home if matches is null or empty
+    console.log("Checking matches in Results page:", matches);
+    if (matches === null || matches.length === 0) {
+      console.log("No matches found, redirecting to home");
+      navigate("/");
+    }
   }, [matches, navigate]);
 
   // Limit to 6 visible cards for better layout
