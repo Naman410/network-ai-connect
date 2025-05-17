@@ -111,7 +111,7 @@ export default function MatchCard({
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
       hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[340px]' : 'h-[340px]'} justify-between p-6
-      min-w-[300px] w-full transform hover:scale-[1.01] transition-transform duration-200
+      min-w-[280px] w-full max-w-full transform hover:scale-[1.01] transition-transform duration-200 overflow-hidden
       after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 dark:after:to-[#7C3AED]/30 after:pointer-events-none`}>
       <div>
         {/* Name with fixed height */}
@@ -123,13 +123,13 @@ export default function MatchCard({
         <div className={`mb-2 ${!isTitleExpanded ? 'h-[22px]' : ''}`}>
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-800 dark:text-gray-50 font-medium ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
+              <div className={`text-gray-800 dark:text-gray-50 font-medium pr-5 ${isTitleExpanded ? '' : 'line-clamp-1'}`} style={{ wordBreak: 'break-word' }}>
                 {title}
               </div>
               {title.length > 50 && (
                 <button
                   onClick={() => setIsTitleExpanded(!isTitleExpanded)}
-                  className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0"
+                  className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0 absolute right-6"
                   aria-label={isTitleExpanded ? "Show less" : "Show more"}
                 >
                   {isTitleExpanded ?
@@ -159,8 +159,8 @@ export default function MatchCard({
           {interests && interests.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {interests.map((tag) =>
-                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1.5 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 line-clamp-1 shadow-sm">
-                  {truncate(tag, 15)}
+                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1.5 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 shadow-sm max-w-full overflow-hidden">
+                  <span className="block truncate" title={tag}>{truncate(tag, 12)}</span>
                 </span>
               )}
             </div>
