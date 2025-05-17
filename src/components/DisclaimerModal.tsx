@@ -19,7 +19,7 @@ export default function DisclaimerModal({ open, setOpen }: { open: boolean; setO
           <DialogDescription className="text-gray-700 dark:text-gray-300 text-sm">
             Intro data comes from publicly shared Discord <em>#introductions</em>.<br />
             Want your info removed? Email&nbsp;
-            <a href="mailto:optout@supernetwork.ai" className="underline text-accent1">optout@supernetwork.ai</a>
+            <a href="mailto:namkej@gmail.com" className="underline text-accent1">namkej@gmail.com</a>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

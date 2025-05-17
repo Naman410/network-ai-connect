@@ -10,16 +10,21 @@ const QUESTIONS = [
   "Who are you hoping to meet?",
 ];
 
+// Colors for dark/light mode
+const chatBubbles = {
+  ai: "bg-gradient-to-r from-[#E5DEFF] to-[#D3E4FD] dark:from-[#241350]/90 dark:to-[#194844]/90 text-accent1 dark:text-accent2",
+  user: "bg-gradient-to-r from-white/90 to-[#F2FCE2]/80 dark:from-[#042C26]/90 dark:to-[#1A1F2C]/80 text-slate-800 dark:text-white font-semibold",
+};
+
 export default function ChatWizard() {
   const [answers, setAnswers] = useState<string[]>(["", "", ""]);
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [shown, setShown] = useState<number[]>([]); // For step-bubble animation
+  const [shown, setShown] = useState<number[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const { setMatches } = useMatchContext();
   const navigate = useNavigate();
 
-  // On mount & step, animate chat bubble appearance
   React.useEffect(() => {
     setTimeout(() => setShown((prev) => prev.includes(step) ? prev : [...prev, step]), 150);
     if (inputRef.current) inputRef.current.focus();
@@ -31,7 +36,6 @@ export default function ChatWizard() {
     if (step < 2) {
       setStep((s) => s + 1);
     } else {
-      // POST answers, set loading
       setSubmitting(true);
       try {
         const res = await fetch("/api/match", {
@@ -39,12 +43,17 @@ export default function ChatWizard() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ answers }),
         });
+        // Clarify front-end only
         if (!res.ok) throw new Error("Match API failed");
         const data = await res.json();
         setMatches(data.matches);
         navigate("/results");
       } catch (err) {
-        toast({ title: "Something went wrong. Try again?", description: "", variant: "destructive" });
+        toast({
+          title: "No real AI API here 😅",
+          description: "This is a demo. If you need real matches, connect your database and backend!",
+          variant: "destructive",
+        });
       } finally {
         setSubmitting(false);
       }
@@ -52,27 +61,25 @@ export default function ChatWizard() {
   }
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col mt-8">
+    <div className="w-full max-w-lg mx-auto flex flex-col mt-8 px-2 sm:px-0">
       {QUESTIONS.map((q, idx) => (
-        <div
-          key={q}
-          className={`flex flex-col items-${idx % 2 === 0 ? "end" : "start"} mb-4`}
-        >
+        <div key={q} className="flex flex-col gap-2 mb-6">
+          {/* AI / Question (Left-aligned) */}
           {shown.includes(idx) && (
-            <div
-              className={`fade-slide inline-block px-5 py-3 mb-1 max-w-[90%] font-medium rounded-2xl shadow card-radius glass ${
-                idx % 2 === 0
-                  ? "rounded-br-none self-end bg-grayui dark:bg-slate-800 text-foreground"
-                  : "rounded-bl-none self-start bg-[rgb(124,58,237)/0.15] dark:bg-[rgb(4,185,113)/.12] text-accent1"
-              }`}
-            >
-              {q}
+            <div className="flex animate-fade-in">
+              <div
+                className={`fade-slide inline-block px-5 py-3 mb-1 max-w-[80%] md:max-w-[65%] font-medium rounded-2xl shadow card-radius glass
+              ${chatBubbles.ai} rounded-bl-none self-start border border-accent1/25`}
+              >
+                {q}
+              </div>
             </div>
           )}
+          {/* Input for this step */}
           {step === idx && (
             <form
               onSubmit={handleSubmit}
-              className={`w-full flex gap-2 mt-1`}
+              className="w-full flex flex-row gap-1 sm:gap-3 mt-1 justify-end"
               autoComplete="off"
             >
               <input
@@ -83,7 +90,7 @@ export default function ChatWizard() {
                 disabled={submitting}
                 maxLength={70}
                 placeholder="Type your answer…"
-                className="flex-1 px-3 py-2 glass rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#7C3AED] transition shadow-sm text-base bg-white dark:bg-slate-900"
+                className="flex-1 px-3 py-2 card-radius glass border focus:outline-none focus:ring-2 focus:ring-[#7C3AED] transition shadow-sm text-base bg-white dark:bg-slate-900"
                 value={answers[idx]}
                 onChange={(e) => {
                   const arr = answers.slice();
@@ -95,7 +102,7 @@ export default function ChatWizard() {
                 aria-label="Next"
                 type="submit"
                 disabled={submitting || !answers[idx].trim()}
-                className="gradient-accent text-white px-4 py-2 rounded-lg font-semibold shadow transition-transform duration-150 hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-[#7C3AED] hover:brightness-105"
+                className="gradient-accent text-white px-4 py-2 rounded-lg font-semibold shadow transition-transform duration-150 hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-[#7C3AED] hover:brightness-105"
               >
                 {submitting ? (
                   <span className="flex items-center gap-2">
@@ -108,11 +115,14 @@ export default function ChatWizard() {
               </button>
             </form>
           )}
+          {/* User Answer (Right-aligned bubble) */}
           {step > idx && answers[idx] && (
-            <div
-              className={`fade-slide mt-1 ml-auto mr-1 px-4 py-2 rounded-md bg-gradient-accent text-white w-fit font-semibold shadow`}
-            >
-              {answers[idx]}
+            <div className="flex justify-end animate-fade-in">
+              <div
+                className={`fade-slide mt-1 ml-auto mr-1 px-5 py-3 rounded-2xl ${chatBubbles.user} rounded-br-none self-end max-w-[80%] md:max-w-[65%] shadow card-radius border border-accent2/25`}
+              >
+                {answers[idx]}
+              </div>
             </div>
           )}
         </div>
