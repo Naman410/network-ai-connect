@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { useMatchContext } from "@/contexts/MatchContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { supabase, callEdgeFunction } from "@/lib/supabase";
 
 const QUESTIONS = [
   "What motivates you right now?",
@@ -15,21 +16,128 @@ const chatBubbles = {
   user: "bg-gradient-to-r from-white/90 to-[#F2FCE2]/80 dark:from-[#042C26]/90 dark:to-[#1A1F2C]/80 text-slate-800 dark:text-white font-semibold",
 };
 
+// Helper function to generate a mock match reason based on user answers and profile
+function generateMockMatchReason(answers: string[], profile: any): string {
+  const reasons = [
+    "You both share interests in technology and innovation.",
+    "Your skills complement each other well for collaboration.",
+    "You have similar motivations and career goals.",
+    "Your backgrounds suggest a strong potential partnership.",
+    "You both value similar approaches to problem-solving.",
+  ];
+
+  // Try to make it more personalized if possible
+  if (profile.interests && profile.interests.length > 0) {
+    const interest = profile.interests[Math.floor(Math.random() * profile.interests.length)];
+    if (answers.some(answer => answer.toLowerCase().includes(interest.toLowerCase()))) {
+      return `You both mentioned an interest in ${interest}.`;
+    }
+  }
+
+  if (profile.title && answers.some(answer => answer.toLowerCase().includes(profile.title.toLowerCase()))) {
+    return `Your interests align with their expertise as a ${profile.title}.`;
+  }
+
+  // Default to random reason
+  return reasons[Math.floor(Math.random() * reasons.length)];
+}
+
+// Helper function to generate random locations for mock profiles
+function getRandomLocation(): string {
+  const locations = [
+    "San Francisco, CA",
+    "New York, NY",
+    "Austin, TX",
+    "Seattle, WA",
+    "Boston, MA",
+    "Chicago, IL",
+    "Los Angeles, CA",
+    "Denver, CO",
+    "Portland, OR",
+    "Atlanta, GA"
+  ];
+  return locations[Math.floor(Math.random() * locations.length)];
+}
+
 async function fetchProfilesFromDB() {
-  // Fetch all profiles with joined interests/job titles for Gemini (publicly readable)
-  const raw = await fetch("/rest/v1/profiles?select=id,actual_name:actual_name,discord_username:discord_username,profile_experience_job_titles(experience_job_title),profile_interests(interest)", {
-    headers: { "apikey": "" }, // Supabase does not require for open public
-  });
-  if (!raw.ok) throw new Error("Could not load candidate profiles");
-  const data = await raw.json();
-  // Format
-  return data.map((p: any) => ({
-    name: p.actual_name,
-    discord: p.discord_username,
-    title: (p.profile_experience_job_titles?.[0]?.experience_job_title) || "",
-    interests: (p.profile_interests || []).map((i: any) => i.interest).filter(Boolean),
-    why: "", // Will be filled by Gemini API
-  }));
+  try {
+    console.log('Fetching profiles from Supabase...');
+
+    // Try to fetch from Supabase using the client
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
+        id,
+        actual_name,
+        discord_username,
+        profile_experience_job_titles(experience_job_title),
+        profile_interests(interest)
+      `);
+
+    if (error) {
+      console.error('Supabase query error:', error);
+      throw error;
+    }
+
+    console.log('Profiles data from Supabase:', data);
+
+    if (!data || data.length === 0) {
+      console.warn('No profiles found in Supabase');
+      throw new Error("No profiles found");
+    }
+
+    // Format the data
+    const formattedProfiles = data.map((p: any) => ({
+      name: p.actual_name,
+      discord: p.discord_username,
+      title: (p.profile_experience_job_titles?.[0]?.experience_job_title) || "",
+      interests: (p.profile_interests || []).map((i: any) => i.interest).filter(Boolean),
+      why: "", // Will be filled by Gemini API
+    }));
+
+    console.log('Formatted profiles:', formattedProfiles);
+    return formattedProfiles;
+  } catch (error) {
+    console.log("Error fetching profiles, using mock data:", error);
+    // Return mock profiles for local development
+    return [
+      {
+        name: "Alex Chen",
+        discord: "alexchen#1234",
+        title: "Full-stack Developer",
+        interests: ["Machine Learning", "React", "Hiking"],
+        why: "",
+      },
+      {
+        name: "Jordan Taylor",
+        discord: "jtaylor#5678",
+        title: "UX Designer",
+        interests: ["UI/UX", "Design Systems", "Photography"],
+        why: "",
+      },
+      {
+        name: "Sam Rodriguez",
+        discord: "samrod#9012",
+        title: "Data Scientist",
+        interests: ["NLP", "Computer Vision", "Cycling"],
+        why: "",
+      },
+      {
+        name: "Jamie Wilson",
+        discord: "jwilson#3456",
+        title: "DevOps Engineer",
+        interests: ["Kubernetes", "Docker", "Cloud Architecture"],
+        why: "",
+      },
+      {
+        name: "Morgan Lee",
+        discord: "mlee#7890",
+        title: "Mobile Developer",
+        interests: ["React Native", "Flutter", "UI Animation"],
+        why: "",
+      }
+    ];
+  }
 }
 
 export default function ChatWizard() {
@@ -56,24 +164,46 @@ export default function ChatWizard() {
       try {
         // 1. Fetch all profiles (~120, public readable) for Gemini
         const allProfiles = await fetchProfilesFromDB();
-        // 2. Send to edge function for best matches
-        const res = await fetch("/functions/v1/match-gemini", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers, profiles: allProfiles }),
-        });
-        const result = await res.json();
-        if (!res.ok || !result.matches) throw new Error(result.error || "No matches found");
-        setMatches(result.matches);
-        if (result.fallbackUsed) {
+
+        try {
+          // 2. Try to send to edge function for best matches using Supabase client
+          const result = await callEdgeFunction('match-gemini', {
+            answers,
+            profiles: allProfiles
+          });
+
+          if (!result || !result.matches) throw new Error("No matches found");
+          setMatches(result.matches);
+
+          if (result.fallbackUsed) {
+            toast({
+              title: "LLM Unavailable",
+              description: "Couldn't reach Gemini, but here are some manual matches.",
+              variant: "destructive"
+            });
+          }
+          navigate("/results");
+        } catch (apiError) {
+          console.log("Edge function error, using mock matches:", apiError);
+
+          // Generate mock matches with "why" explanations based on user answers
+          const mockMatches = allProfiles.map(profile => ({
+            ...profile,
+            why: generateMockMatchReason(answers, profile),
+            location: getRandomLocation()
+          }));
+
+          setMatches(mockMatches);
+          navigate("/results");
+
           toast({
-            title: "LLM Unavailable",
-            description: "Couldn't reach Gemini, but here are some manual matches.",
-            variant: "destructive"
+            title: "Using Demo Mode",
+            description: "Showing mock matches since the AI matching service is unavailable.",
+            variant: "default"
           });
         }
-        navigate("/results");
       } catch (err) {
+        console.error("Fatal error in matchmaking:", err);
         toast({
           title: "Matchmaking unavailable",
           description: "An error occurred finding matches. Please try again soon.",
