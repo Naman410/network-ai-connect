@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useMatchContext } from "@/contexts/MatchContext";
 import MatchCard from "@/components/MatchCard";
@@ -38,7 +37,7 @@ const Results = () => {
     }
   }, [matches, navigate]);
 
-  // Show all matches
+  // Card/grid layout: wider cards, adjust responsive columns & min widths
   const visibleMatches = matches || [];
   // Add skeleton placeholders if needed for a minimum of 6 cards
   const MIN_CARDS = 6;
@@ -61,17 +60,27 @@ const Results = () => {
           Home
         </button>
       </div>
-      <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-accent-text text-center drop-shadow-lg">Your Matches</h2>
-      <p className="text-lg text-gray-600 dark:text-gray-200 mb-7 text-center">Connect with standout collaborators on Discord!</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-3 gradient-accent-text text-center drop-shadow-lg tracking-tight">Your Matches</h2>
+      <p className="text-lg md:text-xl text-gray-600 dark:text-gray-200 mb-9 text-center">Connect with standout collaborators on Discord!</p>
       {!matches && <ResultsSkeleton />}
       {matches && (
-        <div className="container mx-auto max-w-7xl">
-          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 px-4 sm:px-6 fade-slide">
+        <div className="mx-auto w-full max-w-[1440px] px-2 sm:px-6">
+          <div className="relative grid gap-10
+            grid-cols-1
+            sm:grid-cols-2
+            md:grid-cols-2
+            lg:grid-cols-3
+            xl:grid-cols-3
+            2xl:grid-cols-4
+            mb-12 fade-slide">
             {visibleMatches.map((m) => (
               <MatchCard key={m.discord} {...m} />
             ))}
             {Array.from({ length: skeletonFill }).map((_, idx) => (
-              <div key={`skeleton-${idx}`} className="h-[340px] glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-5">
+              <div
+                key={`skeleton-${idx}`}
+                className="h-[370px] min-w-[310px] max-w-[400px] mx-auto glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-6"
+              >
                 <div className="h-6 w-1/2 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
                 <div className="h-4 w-2/3 mb-4 bg-slate-300 dark:bg-slate-800 rounded" />
                 <div className="h-4 w-1/3 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
@@ -87,11 +96,10 @@ const Results = () => {
               </div>
             ))}
           </div>
-
           {matches.length > 6 && (
             <div className="text-center mb-8 mt-4">
               <button
-                className="px-4 py-2 text-sm font-medium text-accent1 border border-accent1 rounded-md hover:bg-accent1/10 transition-colors"
+                className="px-4 py-2 text-base font-bold text-white bg-accent1 rounded-xl shadow-md hover:bg-accent2 transition-all"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 Scroll to top
