@@ -120,13 +120,13 @@ export default function MatchCard({
         </div>
 
         {/* Title - expandable */}
-        <div className={`mb-2 ${!isTitleExpanded ? 'h-[22px]' : ''}`}>
+        <div className={`mb-3 ${!isTitleExpanded ? 'h-[24px]' : ''} overflow-hidden`}>
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-800 dark:text-gray-50 font-medium pr-5 ${isTitleExpanded ? '' : 'line-clamp-1'}`} style={{ wordBreak: 'break-word' }}>
+              <div className={`text-gray-800 dark:text-gray-50 font-medium pr-6 ${isTitleExpanded ? '' : 'line-clamp-1'}`} style={{ wordBreak: 'break-word' }}>
                 {title}
               </div>
-              {title.length > 50 && (
+              {title.length > 40 && (
                 <button
                   onClick={() => setIsTitleExpanded(!isTitleExpanded)}
                   className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0 absolute right-6"
@@ -168,9 +168,10 @@ export default function MatchCard({
         </div>
 
         {/* Why matched with fixed height */}
-        <div className="h-[60px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner">
+        <div className="h-[70px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner overflow-hidden">
           <p className="line-clamp-3" title={`Why you matched: ${why}`}>
-            <span className="font-semibold text-accent1 dark:text-accent2">Why you matched:</span> <span className="italic">{why}</span>
+            <span className="font-semibold text-accent1 dark:text-accent2 block mb-1">Why you matched:</span>
+            <span className="italic block overflow-hidden">{why}</span>
           </p>
         </div>
       </div>

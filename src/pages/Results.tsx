@@ -65,8 +65,8 @@ const Results = () => {
       <p className="text-lg text-gray-600 dark:text-gray-200 mb-7 text-center">Connect with standout collaborators on Discord!</p>
       {!matches && <ResultsSkeleton />}
       {matches && (
-        <div className="container mx-auto max-w-[1440px]">
-          <div className="relative grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8 mb-12 px-4 sm:px-6 fade-slide">
+        <div className="container mx-auto max-w-[1600px]">
+          <div className="relative grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-10 mb-12 px-6 sm:px-8 fade-slide">
             {visibleMatches.map((m) => (
               <MatchCard key={m.discord} {...m} />
             ))}
