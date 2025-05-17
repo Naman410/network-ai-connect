@@ -110,19 +110,20 @@ export default function MatchCard({
 
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[340px]' : 'h-[340px]'} justify-between p-5
-      after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 after:pointer-events-none`}>
+      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[340px]' : 'h-[340px]'} justify-between p-6
+      min-w-[300px] w-full transform hover:scale-[1.01] transition-transform duration-200
+      after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 dark:after:to-[#7C3AED]/30 after:pointer-events-none`}>
       <div>
         {/* Name with fixed height */}
-        <div className="mb-2">
-          <h3 className="font-bold text-lg line-clamp-1" title={name}>{name}</h3>
+        <div className="mb-3">
+          <h3 className="font-bold text-xl line-clamp-1 tracking-tight dark:text-white text-slate-900" title={name}>{name}</h3>
         </div>
 
         {/* Title - expandable */}
         <div className={`mb-2 ${!isTitleExpanded ? 'h-[22px]' : ''}`}>
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-900 dark:text-gray-100 ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
+              <div className={`text-gray-800 dark:text-gray-50 font-medium ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
                 {title}
               </div>
               {title.length > 50 && (
@@ -144,7 +145,10 @@ export default function MatchCard({
         {/* Location with fixed height */}
         <div className="h-[20px] mb-2">
           {location && (
-            <div className="text-sm text-slate-600 dark:text-slate-300 line-clamp-1" title={location}>
+            <div className="text-sm text-slate-600 dark:text-slate-300 line-clamp-1 flex items-center" title={location}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 mr-1 text-slate-500 dark:text-slate-400">
+                <path fillRule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+              </svg>
               {location}
             </div>
           )}
@@ -155,7 +159,7 @@ export default function MatchCard({
           {interests && interests.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {interests.map((tag) =>
-                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 text-xs font-semibold px-2 py-1 rounded-full border border-accent1/20 text-accent1 dark:text-accent2 line-clamp-1">
+                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1.5 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 line-clamp-1 shadow-sm">
                   {truncate(tag, 15)}
                 </span>
               )}
@@ -164,9 +168,9 @@ export default function MatchCard({
         </div>
 
         {/* Why matched with fixed height */}
-        <div className="h-[60px] italic text-slate-800 dark:text-slate-200 text-sm">
+        <div className="h-[60px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner">
           <p className="line-clamp-3" title={`Why you matched: ${why}`}>
-            🤝 <span className="font-medium">Why you matched:</span> {why}
+            <span className="font-semibold text-accent1 dark:text-accent2">Why you matched:</span> <span className="italic">{why}</span>
           </p>
         </div>
       </div>
@@ -174,10 +178,10 @@ export default function MatchCard({
       {/* Button for copying Discord ID */}
       <div className="flex mt-auto z-10">
         <button
-          className="flex items-center justify-center gap-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 rounded-lg font-semibold shadow border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all w-full"
+          className="flex items-center justify-center gap-2 bg-white dark:bg-indigo-600 text-slate-800 dark:text-white px-4 py-3 rounded-lg font-semibold shadow-md border border-slate-200 dark:border-indigo-500 hover:bg-slate-50 dark:hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] transition-all w-full transform hover:translate-y-[-2px]"
           onClick={handleCopyUsername}
         >
-          <Copy size={16} className="inline-block text-slate-600 dark:text-slate-300" />
+          <Copy size={18} className="inline-block text-slate-600 dark:text-white" />
           Copy Discord ID
         </button>
       </div>

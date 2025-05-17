@@ -65,13 +65,13 @@ const Results = () => {
       <p className="text-lg text-gray-600 dark:text-gray-200 mb-7 text-center">Connect with standout collaborators on Discord!</p>
       {!matches && <ResultsSkeleton />}
       {matches && (
-        <div className="container mx-auto max-w-7xl">
-          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 px-4 sm:px-6 fade-slide">
+        <div className="container mx-auto max-w-[1440px]">
+          <div className="relative grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-12 px-4 sm:px-6 fade-slide">
             {visibleMatches.map((m) => (
               <MatchCard key={m.discord} {...m} />
             ))}
             {Array.from({ length: skeletonFill }).map((_, idx) => (
-              <div key={`skeleton-${idx}`} className="h-[340px] glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-5">
+              <div key={`skeleton-${idx}`} className="h-[340px] min-w-[300px] glass card-radius shadow-card animate-pulse-skel bg-gray-100 dark:bg-slate-800 flex flex-col p-6">
                 <div className="h-6 w-1/2 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
                 <div className="h-4 w-2/3 mb-4 bg-slate-300 dark:bg-slate-800 rounded" />
                 <div className="h-4 w-1/3 mb-4 bg-slate-200 dark:bg-slate-700 rounded" />
@@ -91,9 +91,12 @@ const Results = () => {
           {matches.length > 6 && (
             <div className="text-center mb-8 mt-4">
               <button
-                className="px-4 py-2 text-sm font-medium text-accent1 border border-accent1 rounded-md hover:bg-accent1/10 transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-accent1 dark:text-accent2 border border-accent1 dark:border-accent2 rounded-lg hover:bg-accent1/10 dark:hover:bg-accent2/10 transition-all shadow-sm transform hover:translate-y-[-2px]"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
                 Scroll to top
               </button>
             </div>
