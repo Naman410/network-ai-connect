@@ -52,6 +52,12 @@ export async function callEdgeFunction(functionName: string, payload: any) {
         if (response.ok) {
           const mockData = await response.json();
           console.log('Using mock data instead of edge function');
+
+          // Ensure fallbackUsed is set to false for mock data in Lovable environment
+          if (mockData && typeof mockData === 'object') {
+            mockData.fallbackUsed = false;
+          }
+
           return mockData;
         }
       } catch (mockError) {

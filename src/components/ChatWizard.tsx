@@ -228,7 +228,10 @@ export default function ChatWizard() {
 
           setMatches(result.matches);
 
-          if (result.fallbackUsed) {
+          // Only show the LLM unavailable toast if fallbackUsed is explicitly true
+          // and we're not in the Lovable environment (where we expect to use mock data)
+          if (result.fallbackUsed === true && !isLovableEnvironment()) {
+            console.log("Showing LLM unavailable toast because fallbackUsed is true");
             toast({
               title: "LLM Unavailable",
               description: "Couldn't reach Gemini, but here are some manual matches.",
@@ -256,11 +259,15 @@ export default function ChatWizard() {
             throw new Error("Failed to generate matches");
           }
 
-          toast({
-            title: "Using Demo Mode",
-            description: "Showing mock matches since the AI matching service is unavailable.",
-            variant: "default"
-          });
+          // Only show the demo mode toast if we're not in Lovable environment
+          // In Lovable, we expect to use mock data, so no need for a notification
+          if (!isLovableEnvironment()) {
+            toast({
+              title: "Using Demo Mode",
+              description: "Showing mock matches since the AI matching service is unavailable.",
+              variant: "default"
+            });
+          }
         }
       } catch (err) {
         console.error("Fatal error in matchmaking:", err);
