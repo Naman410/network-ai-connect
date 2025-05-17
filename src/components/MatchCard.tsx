@@ -110,8 +110,8 @@ export default function MatchCard({
 
   return (
     <div className={`glass card-radius group shadow-card relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800
-      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[340px]' : 'h-[340px]'} justify-between p-6
-      min-w-[300px] w-full transform hover:scale-[1.01] transition-transform duration-200
+      hover:border-accent1/90 hover:shadow-xl transition-all flex flex-col ${isTitleExpanded ? 'min-h-[360px]' : 'h-[360px]'} justify-between p-6
+      min-w-[320px] w-full transform hover:scale-[1.01] transition-transform duration-200 overflow-hidden
       after:absolute after:-z-0 after:inset-0 after:bg-gradient-to-br after:from-[#f1f0fb]/0 after:to-[#7C3AED]/10 dark:after:to-[#7C3AED]/30 after:pointer-events-none`}>
       <div>
         {/* Name with fixed height */}
@@ -120,16 +120,16 @@ export default function MatchCard({
         </div>
 
         {/* Title - expandable */}
-        <div className={`mb-2 ${!isTitleExpanded ? 'h-[22px]' : ''}`}>
+        <div className={`mb-3 ${!isTitleExpanded ? 'h-[24px]' : ''} overflow-hidden`}>
           {title && (
             <div className="flex items-start">
-              <div className={`text-gray-800 dark:text-gray-50 font-medium ${isTitleExpanded ? '' : 'line-clamp-1'}`}>
+              <div className={`text-gray-800 dark:text-gray-50 font-medium pr-6 ${isTitleExpanded ? '' : 'line-clamp-1'}`} style={{ wordBreak: 'break-word' }}>
                 {title}
               </div>
-              {title.length > 50 && (
+              {title.length > 40 && (
                 <button
                   onClick={() => setIsTitleExpanded(!isTitleExpanded)}
-                  className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0"
+                  className="ml-1 text-accent1 hover:text-accent2 transition-colors flex-shrink-0 absolute right-6"
                   aria-label={isTitleExpanded ? "Show less" : "Show more"}
                 >
                   {isTitleExpanded ?
@@ -159,8 +159,8 @@ export default function MatchCard({
           {interests && interests.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {interests.map((tag) =>
-                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1.5 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 line-clamp-1 shadow-sm">
-                  {truncate(tag, 15)}
+                <span key={tag} className="bg-gradient-to-r from-accent1/15 to-accent2/15 dark:from-accent1/25 dark:to-accent2/25 text-xs font-semibold px-2.5 py-1.5 rounded-full border border-accent1/20 dark:border-accent1/30 text-accent1 dark:text-accent2 shadow-sm max-w-full overflow-hidden">
+                  <span className="block truncate" title={tag}>{truncate(tag, 12)}</span>
                 </span>
               )}
             </div>
@@ -168,9 +168,10 @@ export default function MatchCard({
         </div>
 
         {/* Why matched with fixed height */}
-        <div className="h-[60px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner">
+        <div className="h-[70px] text-slate-800 dark:text-slate-200 text-sm bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50 shadow-inner overflow-hidden">
           <p className="line-clamp-3" title={`Why you matched: ${why}`}>
-            <span className="font-semibold text-accent1 dark:text-accent2">Why you matched:</span> <span className="italic">{why}</span>
+            <span className="font-semibold text-accent1 dark:text-accent2 block mb-1">Why you matched:</span>
+            <span className="italic block overflow-hidden">{why}</span>
           </p>
         </div>
       </div>
