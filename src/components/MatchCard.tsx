@@ -21,7 +21,7 @@ function truncate(str: string, n: number) {
 function discordUrl(user: string) {
   if (!user) return "#";
 
-  // Clean up the username if it has a discriminator
+  // Clean up the username if it has a discriminator or @ symbol
   const cleanUser = user.replace(/^@/, '');
 
   // If snowflake ID, use /users/ route
@@ -31,6 +31,19 @@ function discordUrl(user: string) {
 
   // For usernames, open Discord app to DMs
   return "https://discord.com/channels/@me";
+}
+
+// Format Discord username for display
+function formatDiscordUsername(username: string): string {
+  if (!username) return "";
+
+  // If it already has a # or @ prefix, return as is
+  if (username.includes('#') || username.startsWith('@')) {
+    return username;
+  }
+
+  // Otherwise, add @ prefix for modern Discord usernames
+  return `@${username}`;
 }
 
 // Prefilled friendly intro (for clipboard)
@@ -49,8 +62,12 @@ export default function MatchCard({
   why,
 }: Props) {
   const handleCopyUsername = () => {
-    navigator.clipboard.writeText(discord);
-    toast({ title: "Discord username copied", description: discord });
+    const formattedUsername = formatDiscordUsername(discord);
+    navigator.clipboard.writeText(formattedUsername);
+    toast({
+      title: "Discord username copied",
+      description: formattedUsername
+    });
   };
 
   const handleFriendlyIntro = () => {
@@ -58,9 +75,12 @@ export default function MatchCard({
       // Copy the intro message to clipboard
       navigator.clipboard.writeText(FRIENDLY_INTRO(name));
 
+      // Format the Discord username
+      const formattedUsername = formatDiscordUsername(discord);
+
       // Log for debugging
-      console.log('Opening Discord URL for:', discord);
-      const url = discordUrl(discord);
+      console.log('Opening Discord URL for:', formattedUsername);
+      const url = discordUrl(formattedUsername);
       console.log('Discord URL:', url);
 
       // Open Discord in a new tab
@@ -75,10 +95,13 @@ export default function MatchCard({
     } catch (error) {
       console.error('Error in handleFriendlyIntro:', error);
 
+      // Format the username for the fallback toast
+      const formattedUsername = formatDiscordUsername(discord);
+
       // Fallback toast if there's an error
       toast({
         title: "Discord username copied",
-        description: `Add ${discord} on Discord to connect!`,
+        description: `Add ${formattedUsername} on Discord to connect!`,
         duration: 5000,
       });
     }

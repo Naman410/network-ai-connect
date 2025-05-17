@@ -195,7 +195,7 @@ export default function ChatWizard() {
           console.log('Lovable environment detected, using mock data for matches');
           try {
             // Try to fetch the mock data from the public folder
-            const response = await fetch('/api/match/index.json');
+            const response = await fetch('/api/match');
             if (response.ok) {
               const data = await response.json();
               console.log('Mock matches loaded from public folder:', data);

@@ -23,6 +23,31 @@
       "location": "Austin, TX",
       "interests": ["NLP", "Computer Vision", "Cycling"],
       "why": "Shared interest in machine learning applications"
+    },
+    {
+      "name": "Jamie Wilson",
+      "discord": "jwilson#3456",
+      "title": "DevOps Engineer",
+      "location": "Seattle, WA",
+      "interests": ["Kubernetes", "Docker", "Cloud Architecture"],
+      "why": "Your interests align with their expertise in cloud infrastructure"
+    },
+    {
+      "name": "Morgan Lee",
+      "discord": "morganlee",
+      "title": "Mobile Developer",
+      "location": "Boston, MA",
+      "interests": ["React Native", "Flutter", "UI Animation"],
+      "why": "You both have complementary skills in mobile development"
+    },
+    {
+      "name": "Taylor Johnson",
+      "discord": "taylor.j",
+      "title": "Product Manager & UX Researcher",
+      "location": "Chicago, IL",
+      "interests": ["User Research", "Product Strategy", "Agile"],
+      "why": "Your technical skills complement their product expertise"
     }
-  ]
+  ],
+  "fallbackUsed": true
 }

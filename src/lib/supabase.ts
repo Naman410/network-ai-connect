@@ -32,8 +32,34 @@ export async function callEdgeFunction(functionName: string, payload: any) {
   try {
     console.log(`Calling Supabase Edge Function: ${functionName}`);
     console.log('Supabase URL:', supabaseUrl);
-    console.log('Payload:', payload);
+    console.log('Environment:', import.meta.env.MODE);
 
+    // Don't log the full payload as it might be large
+    console.log('Payload summary:', {
+      answersLength: payload.answers?.length,
+      profilesCount: payload.profiles?.length
+    });
+
+    // Check if we're in a Lovable environment
+    const isLovable = typeof window !== 'undefined' &&
+      (window.location.hostname.includes('lovable.dev') ||
+       document.referrer.includes('lovable.dev'));
+
+    if (isLovable) {
+      console.log('Lovable environment detected, attempting to use mock data');
+      try {
+        const response = await fetch('/api/match');
+        if (response.ok) {
+          const mockData = await response.json();
+          console.log('Using mock data instead of edge function');
+          return mockData;
+        }
+      } catch (mockError) {
+        console.warn('Failed to load mock data:', mockError);
+      }
+    }
+
+    // Proceed with actual edge function call
     const { data, error } = await supabase.functions.invoke(functionName, {
       body: payload,
     });
@@ -43,7 +69,11 @@ export async function callEdgeFunction(functionName: string, payload: any) {
       throw error;
     }
 
-    console.log(`Supabase Edge Function Response:`, data);
+    console.log(`Supabase Edge Function Response received`);
+    if (data?.matches) {
+      console.log(`Received ${data.matches.length} matches`);
+    }
+
     return data;
   } catch (error) {
     console.error(`Error calling ${functionName}:`, error);
