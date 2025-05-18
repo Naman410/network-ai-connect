@@ -26,7 +26,7 @@ const Index = () => {
         <ChatWizard />
       </div>
       <footer className="mt-12 mb-5 text-center text-sm text-gray-500 dark:text-slate-400 relative z-10">
-        © 2024 SuperNetworkAI — Vibed in 6 hours ·{" "}
+        © 2025 SuperNetworkAI — Vibed in 6 hours ·{" "}
         <button
           className="underline text-accent1 hover:text-accent2"
           onClick={() => setModal(true)}
