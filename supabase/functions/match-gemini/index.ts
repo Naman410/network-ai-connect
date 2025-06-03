@@ -1,8 +1,11 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -206,23 +209,90 @@ serve(async (req: Request) => {
   try {
     console.log("Edge function called: match-gemini");
 
+    // Get authorization header
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - No valid token provided' }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Create Supabase client with service role for admin operations
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+
+    // Verify the JWT token and get user
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error('Auth error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`Authenticated user: ${user.id}`);
+
+    // Get user's current LLM usage
+    const { data: userProfile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('llm_requests_used')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error('Error fetching user profile:', profileError);
+      return new Response(
+        JSON.stringify({ error: 'Error fetching user profile' }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const currentUsage = userProfile?.llm_requests_used || 0;
+    const hasLLMAccess = currentUsage < 5;
+
+    console.log(`User ${user.id} has used ${currentUsage}/5 LLM requests. Has access: ${hasLLMAccess}`);
+
     // Parse request body
     const { answers, profiles } = await req.json();
     console.log(`Received request with ${answers?.length || 0} answers and ${profiles?.length || 0} profiles`);
 
-    // Try Gemini API, else fallback
     let matches: any[] = [];
     let usedFallback = false;
+    let llmLimitReached = false;
 
-    try {
-      console.log("Attempting to use Gemini API for matching...");
-      matches = await fetchGeminiMatches({ answers, profiles });
-      console.log(`Successfully got ${matches.length} matches from Gemini API`);
-    } catch (e) {
-      console.error("Gemini API failed, using fallback matching algorithm:", e);
+    // Check if user has LLM access and try Gemini API
+    if (hasLLMAccess) {
+      try {
+        console.log("User has LLM access, attempting to use Gemini API for matching...");
+        matches = await fetchGeminiMatches({ answers, profiles });
+        console.log(`Successfully got ${matches.length} matches from Gemini API`);
+        
+        // Increment user's LLM usage
+        const { error: updateError } = await supabase
+          .from('user_profiles')
+          .update({ llm_requests_used: currentUsage + 1 })
+          .eq('id', user.id);
+
+        if (updateError) {
+          console.error('Error updating LLM usage:', updateError);
+        } else {
+          console.log(`Updated user ${user.id} LLM usage to ${currentUsage + 1}`);
+        }
+      } catch (e) {
+        console.error("Gemini API failed, using fallback matching algorithm:", e);
+        matches = fallbackMatch(answers, profiles);
+        usedFallback = true;
+        console.log(`Used fallback algorithm, generated ${matches.length} matches`);
+      }
+    } else {
+      console.log("User has reached LLM limit, using fallback matching algorithm");
       matches = fallbackMatch(answers, profiles);
       usedFallback = true;
-      console.log(`Used fallback algorithm, generated ${matches.length} matches`);
+      llmLimitReached = true;
+      console.log(`Used fallback algorithm due to limit, generated ${matches.length} matches`);
     }
 
     // Add location to matches if missing
@@ -232,9 +302,14 @@ serve(async (req: Request) => {
     }));
 
     // Return the matches
-    console.log(`Returning ${matches.length} matches, fallbackUsed=${usedFallback}`);
+    console.log(`Returning ${matches.length} matches, fallbackUsed=${usedFallback}, llmLimitReached=${llmLimitReached}`);
     return new Response(
-      JSON.stringify({ matches, fallbackUsed: usedFallback }),
+      JSON.stringify({ 
+        matches, 
+        fallbackUsed: usedFallback, 
+        llmLimitReached,
+        remainingLLMRequests: Math.max(0, 5 - (currentUsage + (hasLLMAccess && !usedFallback ? 1 : 0)))
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err: any) {

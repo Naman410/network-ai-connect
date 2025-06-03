@@ -88,6 +88,57 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles_duplicate: {
+        Row: {
+          actual_name: string | null
+          created_at: string | null
+          discord_username: string | null
+          id: number
+        }
+        Insert: {
+          actual_name?: string | null
+          created_at?: string | null
+          discord_username?: string | null
+          id?: number
+        }
+        Update: {
+          actual_name?: string | null
+          created_at?: string | null
+          discord_username?: string | null
+          id?: number
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          llm_requests_used: number
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          llm_requests_used?: number
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          llm_requests_used?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,8 +1,11 @@
+
 import React, { useState } from "react";
 import ChatWizard from "@/components/ChatWizard";
 import ThemeToggleButton from "@/components/ThemeToggleButton";
 import DisclaimerModal from "@/components/DisclaimerModal";
 import PageWrapper from "@/components/PageWrapper";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import RequestCounter from "@/components/RequestCounter";
 
 const InterestingBackground = () => (
   <div className="pointer-events-none absolute inset-0 z-0">
@@ -15,27 +18,30 @@ const Index = () => {
   const [modal, setModal] = useState(false);
 
   return (
-    <PageWrapper>
-      <InterestingBackground />
-      <ThemeToggleButton />
-      <div className="relative z-10 pt-12 pb-8 flex flex-col items-center min-h-[70vh]">
-        <h1 className="text-4xl font-extrabold gradient-accent-text mb-4 mt-4 text-center drop-shadow-lg">SuperNetworkAI</h1>
-        <div className="text-lg md:text-xl text-slate-700 dark:text-slate-200 mb-8 text-center max-w-xl">
-          Let AI introduce you to the collaborators you’ve been looking for.
+    <ProtectedRoute>
+      <PageWrapper>
+        <InterestingBackground />
+        <ThemeToggleButton />
+        <RequestCounter />
+        <div className="relative z-10 pt-12 pb-8 flex flex-col items-center min-h-[70vh]">
+          <h1 className="text-4xl font-extrabold gradient-accent-text mb-4 mt-4 text-center drop-shadow-lg">SuperNetworkAI</h1>
+          <div className="text-lg md:text-xl text-slate-700 dark:text-slate-200 mb-8 text-center max-w-xl">
+            Let AI introduce you to the collaborators you've been looking for.
+          </div>
+          <ChatWizard />
         </div>
-        <ChatWizard />
-      </div>
-      <footer className="mt-12 mb-5 text-center text-sm text-gray-500 dark:text-slate-400 relative z-10">
-        © 2025 SuperNetworkAI — Vibed in 6 hours ·{" "}
-        <button
-          className="underline text-accent1 hover:text-accent2"
-          onClick={() => setModal(true)}
-        >
-          About & Data Disclaimer
-        </button>
-      </footer>
-      <DisclaimerModal open={modal} setOpen={setModal} />
-    </PageWrapper>
+        <footer className="mt-12 mb-5 text-center text-sm text-gray-500 dark:text-slate-400 relative z-10">
+          © 2025 SuperNetworkAI — Vibed in 6 hours ·{" "}
+          <button
+            className="underline text-accent1 hover:text-accent2"
+            onClick={() => setModal(true)}
+          >
+            About & Data Disclaimer
+          </button>
+        </footer>
+        <DisclaimerModal open={modal} setOpen={setModal} />
+      </PageWrapper>
+    </ProtectedRoute>
   );
 };
 
